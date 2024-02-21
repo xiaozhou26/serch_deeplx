@@ -26,3 +26,11 @@ jobs:
     - name: Run script
       run: |
         python check.py
+        
+    - name: Commit and push changes
+      run: |
+        git config --local user.email "${{ secrets.EMAIL }}"
+        git config --local user.name "GitHub Action"
+        git add success_result.txt
+        git commit -m "Update success_result.txt"
+        git push
