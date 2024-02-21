@@ -2,8 +2,8 @@ name: Search for bestdeepl
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # Run at 0:00 every day
-  workflow_dispatch:    # Allow manual start
+    - cron: '0 0 * * *'  # 每天00:00运行
+  workflow_dispatch:    # 允许手动启动
 
 jobs:
   build:
@@ -29,7 +29,8 @@ jobs:
     - name: Commit and push if it's different
       run: |
         git config --local user.email "xiaoxiaofeihh@foxmail.com"
-        git config --local user.name "xiaozhou26"
+        git config --local user.name "GitHub Action"
         git add -A
         git diff --quiet && git diff --staged --quiet || git commit -m "Update success_result.txt"
-        git push
+        # 使用PAT代替默认的GITHUB_TOKEN
+        git push https://${{ secrets.GH_PAT }}@github.com/xiaozhou26/serch_deeplx.git HEAD:${{ github.ref }}
