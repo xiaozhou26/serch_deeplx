@@ -30,9 +30,11 @@ jobs:
     - name: Commit and push changes
       run: |
         git config --local user.email "${{ secrets.EMAIL }}"
-        git config --local user.name "xiaozhou26"
+        git config --local user.name "GitHub Action"
         git add success_result.txt
         git commit -m "Update success_result.txt"
+        git remote set-url origin https://github-actions[bot]:${{ secrets.GH_PAT }}@github.com/xiaozhou26/serch_deeplx.git
+        git push
         git push origin HEAD:main
       env:
         GH_PAT: ${{ secrets.GH_PAT }}
