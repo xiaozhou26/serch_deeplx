@@ -2,7 +2,7 @@ import aiohttp
 import asyncio
 import json
 
-async def check_url(session, url, delay=1, max_retries=3):
+async def check_url(session, url, delay=1, max_retries=5):
     payload = json.dumps({
         "text": "hello world",
         "source_lang": "EN",
