@@ -30,7 +30,7 @@ jobs:
     - name: Commit and push changes
       run: |
         git config --local user.email "${{ secrets.EMAIL }}"
-        git config --local user.name "GitHub Action"
+        git config --local user.name "xiaozhou26"
         git add success_result.txt
         git commit -m "Update success_result.txt"
         git push
