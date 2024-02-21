@@ -25,9 +25,11 @@ jobs:
     - name: Run script
       run: |
         python check.py
-    
-    - name: Upload success_result.txt
-      uses: actions/upload-artifact@v2
-      with:
-        name: success_result
-        path: ./success_result.txt
+
+    - name: Commit and push if it's different
+      run: |
+        git config --local user.email "xiaoxiaofeihh@foxmail.com"
+        git config --local user.name "xiaozhou26"
+        git add -A
+        git diff --quiet && git diff --staged --quiet || git commit -m "Update success_result.txt"
+        git push
