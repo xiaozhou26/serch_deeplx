@@ -32,5 +32,4 @@ jobs:
         git config --local user.name "GitHub Action"
         git add -A
         git diff --quiet && git diff --staged --quiet || git commit -m "Update success_result.txt"
-        # 使用PAT代替默认的GITHUB_TOKEN
         git push https://${{ secrets.GH_PAT }}:x-oauth-basic@github.com/xiaozhou26/serch_deeplx.git
