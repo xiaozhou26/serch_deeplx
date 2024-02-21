@@ -33,4 +33,4 @@ jobs:
         git add -A
         git diff --quiet && git diff --staged --quiet || git commit -m "Update success_result.txt"
         # 使用PAT代替默认的GITHUB_TOKEN
-        git push https://${{ secrets.GH_PAT }}@github.com/xiaozhou26/serch_deeplx.git HEAD:${{ github.ref }}
+        git push https://${{ secrets.GH_PAT }}@github.com/xiaozhou26/serch_deeplx.git --force origin main
