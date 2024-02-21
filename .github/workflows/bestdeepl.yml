@@ -33,4 +33,6 @@ jobs:
         git config --local user.name "xiaozhou26"
         git add success_result.txt
         git commit -m "Update success_result.txt"
-        git push
+        git push origin HEAD:main
+      env:
+        GH_PAT: ${{ secrets.GH_PAT }}
