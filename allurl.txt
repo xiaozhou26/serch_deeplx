@@ -1,1 +1,1 @@
-https://api.deeplx.org
+https://deeplx.vercel.app
