@@ -2,7 +2,7 @@ import aiohttp
 import asyncio
 import json
 
-async def check_url(session, url, max_retries=5):
+async def check_url(session, url, delay=1, max_retries=3):
     payload = json.dumps({
         "text": "hello world",
         "source_lang": "EN",
@@ -20,11 +20,11 @@ async def check_url(session, url, max_retries=5):
         except Exception as e:
             print(f"Error for URL {url} (Attempt {attempt}/{max_retries}): {e}")
             if attempt < max_retries:
-                await asyncio.sleep(1)  # Sleep for 1 second before retrying
+                await asyncio.sleep(delay)  # Sleep for a specified delay before retrying
 
     return {'code': None, 'data': None}, url  # Default values in case of failure
 
-async def process_urls(input_file, success_file):
+async def process_urls(input_file, success_file, delay):
     unique_urls = set()
     success_results = []
 
@@ -39,12 +39,12 @@ async def process_urls(input_file, success_file):
         urls = [url.strip() for url in file.readlines()]
 
     async with aiohttp.ClientSession() as session:
-        tasks = [check_url(session, url) for url in urls]
-        for future in asyncio.as_completed(tasks):
-            result, url = await future
+        for url in urls:
+            result, url = await check_url(session, url, delay=delay)
             if url not in unique_urls and result.get('code') == 200 and '世界' in result.get('data', ''):
                 unique_urls.add(url)
                 success_results.append(url)
+                await asyncio.sleep(delay)  # Add delay here for each request
 
     with open(success_file, 'w') as valid_file:
         for url in success_results:
@@ -60,7 +60,8 @@ def list_file(input_file, output_file):
         result_file.write(flattened_lines)
 
 async def main():
-    await process_urls('input.txt', 'success.txt')
+    delay = 1  # Set the delay between requests in seconds
+    await process_urls('input.txt', 'success.txt', delay)
     list_file('success.txt', 'success_result.txt')
 
 asyncio.run(main())
