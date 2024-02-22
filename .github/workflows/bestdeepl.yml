@@ -32,5 +32,5 @@ jobs:
         git config --local user.name "${{ secrets.GIT_USER_NAME }}"
         git add -A
         git diff --quiet && git diff --staged --quiet || git commit -m "Update success_result.txt"
-        git push https://${{ secrets.GH_PAT }}:x-oauth-basic@github.com/${{ secrets.GIT_USERNAME }}/serch_deeplx.git
+        git push https://${{ secrets.GH_PAT }}:x-oauth-basic@github.com/${{ secrets.GIT_USER_NAME }}/serch_deeplx.git
         
