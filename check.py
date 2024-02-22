@@ -1,9 +1,8 @@
 import asyncio
 import json
 from aiohttp import ClientSession
-from time import sleep
 
-async def check_url(session: ClientSession, url: str, max_retries=5):
+async def check_url(session: ClientSession, url: str, max_retries=3):
     payload = json.dumps({
         "text": "hello world",
         "source_lang": "EN",
@@ -24,14 +23,13 @@ async def check_url(session: ClientSession, url: str, max_retries=5):
         except Exception as e:
             print(f"Error for URL {url} (Attempt {attempt}/{max_retries}): {e}")
             if attempt < max_retries:
-                sleep(1)  # Sleep for 1 second before retrying
+                await asyncio.sleep(1)  # Sleep for 1 second before retrying
 
     print(f"All {max_retries} attempts failed. Defaulting to failure.")
     return url, {'code': None, 'data': None}  # Default values
 
 async def process_urls(input_file, success_file):
     unique_urls = set()  # Set to store unique URLs
-    success_results = []  # List to store results
 
     # Load existing success URLs from the success_file
     try:
@@ -53,8 +51,6 @@ async def process_urls(input_file, success_file):
                     unique_urls.add(url)
                     with open(success_file, 'a') as valid_file:
                         valid_file.write(url + '\n')
-
-                    success_results.append(url)  # Append result to the list
             except Exception as exc:
                 print('%r generated an exception: %s' % (url, exc))
 
