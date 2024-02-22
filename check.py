@@ -3,9 +3,17 @@ import json
 import aiofiles
 from aiohttp import ClientSession, ClientTimeout
 
-BUFFER_SIZE = 5  # Define your buffer size here
+# 定义缓冲区大小
+BUFFER_SIZE = 5
 
 async def check_url(session: ClientSession, url: str, max_retries=3):
+    """
+    检查 URL 并翻译文本
+    :param session: aiohttp 会话
+    :param url: 目标 URL
+    :param max_retries: 最大重试次数
+    :return: 元组 (URL, 响应 JSON)
+    """
     payload = json.dumps({
         "text": "hello world",
         "source_lang": "EN",
@@ -32,10 +40,16 @@ async def check_url(session: ClientSession, url: str, max_retries=3):
     return url, {'code': None, 'data': None}  
 
 async def process_urls(input_file, success_file):
+    """
+    处理输入 URL 列表，翻译文本并写入成功文件
+    :param input_file: 输入文件
+    :param success_file: 成功文件
+    """
     unique_urls = set()  
     buffer = []  
 
     try:
+        # 从成功文件中读取已处理过的 URL
         with open(success_file, 'r') as existing_file:
             existing_urls = {line.strip() for line in existing_file}
         unique_urls.update(existing_urls)
@@ -45,7 +59,7 @@ async def process_urls(input_file, success_file):
     with open(input_file, 'r') as file:
         urls = [line.strip() for line in file.readlines()]
 
-    timeout = ClientTimeout(total=10)  # 5 seconds timeout for the requests
+    timeout = ClientTimeout(total=10)  # 5 秒超时时间
     async with ClientSession(timeout=timeout) as session:
         tasks = [check_url(session, url) for url in urls]
         for future in asyncio.as_completed(tasks):
@@ -55,6 +69,7 @@ async def process_urls(input_file, success_file):
                     buffer.append(url)
                     unique_urls.add(url)
                     if len(buffer) >= BUFFER_SIZE:
+                        # 写入成功文件
                         async with aiofiles.open(success_file, 'a') as valid_file:
                             await valid_file.write('\n'.join(buffer) + '\n')
                         buffer = []  
@@ -62,10 +77,16 @@ async def process_urls(input_file, success_file):
                 print('%r generated an exception: %s' % (url, exc))
 
     if buffer:
+        # 写入成功文件
         async with aiofiles.open(success_file, 'a') as valid_file:
             await valid_file.write('\n'.join(buffer) + '\n')
 
 def list_file(input_file, output_file):
+    """
+    将输入文件中的 URL 按行写入输出文件
+    :param input_file: 输入文件
+    :param output_file: 输出文件
+    """
     with open(input_file, 'r') as input_file_content:
         lines = input_file_content.readlines()
 
