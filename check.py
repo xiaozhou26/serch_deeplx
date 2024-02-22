@@ -59,7 +59,7 @@ async def process_urls(input_file, success_file):
     with open(input_file, 'r') as file:
         urls = [line.strip() for line in file.readlines()]
 
-    timeout = ClientTimeout(total=10)  # 5 秒超时时间
+    timeout = ClientTimeout(total=10)  # 10 秒超时时间
     async with ClientSession(timeout=timeout) as session:
         tasks = [check_url(session, url) for url in urls]
         for future in asyncio.as_completed(tasks):
