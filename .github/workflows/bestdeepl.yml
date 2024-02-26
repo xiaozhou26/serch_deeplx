@@ -2,7 +2,7 @@ name: Search for bestdeepl
 
 on:
   schedule:
-    - cron: '0 0 * * *'  # 每天00:00运行
+    - cron: '0 8 * * *'  # 每天08:00运行
   workflow_dispatch:    # 允许手动启动
 
 jobs:
