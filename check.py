@@ -25,7 +25,7 @@ async def check_url(session: ClientSession, url: str, max_retries=3):
 
     for attempt in range(1, max_retries + 1):
         try:
-            requests_url = url + "/translate"
+            requests_url = url + "translate"
             async with session.post(requests_url, headers=headers, data=payload) as response:
                 response.raise_for_status()  
                 response_json = await response.json()
