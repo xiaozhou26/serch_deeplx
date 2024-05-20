@@ -1,0 +1,36 @@
+name: Search for bestdeepl
+
+on:
+  schedule:
+    - cron: '0 8 * * *'  # 每天08:00运行
+  workflow_dispatch:    # 允许手动启动
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.8
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install aiohttp aiofiles
+        
+    - name: Run script
+      run: |
+        python check.py
+
+    - name: Commit and push if it's different
+      run: |
+        git config --local user.email "${{ secrets.GIT_USER_EMAIL }}"
+        git config --local user.name "${{ secrets.GIT_USER_NAME }}"
+        git add -A
+        git commit --allow-empty -m "Update success_result.txt"
+        git push https://${{ secrets.GH_PAT }}:x-oauth-basic@github.com/${{ secrets.GIT_USER_NAME }}/serch_deeplx.git
+        
