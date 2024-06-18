@@ -2,6 +2,7 @@ import asyncio
 import json
 import aiofiles
 from aiohttp import ClientSession, ClientTimeout
+import ssl
 
 # 定义缓冲区大小
 BUFFER_SIZE = 5
@@ -23,21 +24,25 @@ async def check_url(session: ClientSession, url: str, max_retries=3):
         'Content-Type': 'application/json'
     }
 
+    ssl_context = ssl.create_default_context()
+    ssl_context.check_hostname = False
+    ssl_context.verify_mode = ssl.CERT_NONE
+
     for attempt in range(1, max_retries + 1):
         try:
             requests_url = url + "/translate"
-            async with session.post(requests_url, headers=headers, data=payload) as response:
-                response.raise_for_status()  
+            async with session.post(requests_url, headers=headers, data=payload, ssl=ssl_context) as response:
+                response.raise_for_status()
                 response_json = await response.json()
                 print(url, response_json)
                 return url, response_json
         except Exception as e:
             print(f"Error for URL {url} (Attempt {attempt}/{max_retries}): {e}")
             if attempt < max_retries:
-                await asyncio.sleep(1)  
+                await asyncio.sleep(1)
 
     print(f"All {max_retries} attempts failed. Defaulting to failure.")
-    return url, {'code': None, 'data': None}  
+    return url, {'code': None, 'data': None}
 
 async def process_urls(input_file, success_file):
     """
@@ -45,8 +50,8 @@ async def process_urls(input_file, success_file):
     :param input_file: 输入文件
     :param success_file: 成功文件
     """
-    unique_urls = set()  
-    buffer = []  
+    unique_urls = set()
+    buffer = []
 
     try:
         # 从成功文件中读取已处理过的 URL
@@ -54,7 +59,7 @@ async def process_urls(input_file, success_file):
             existing_urls = {line.strip() for line in existing_file}
         unique_urls.update(existing_urls)
     except FileNotFoundError:
-        pass  
+        pass
 
     with open(input_file, 'r') as file:
         urls = [line.strip() for line in file.readlines()]
@@ -72,7 +77,7 @@ async def process_urls(input_file, success_file):
                         # 写入成功文件
                         async with aiofiles.open(success_file, 'a') as valid_file:
                             await valid_file.write('\n'.join(buffer) + '\n')
-                        buffer = []  
+                        buffer = []
             except Exception as exc:
                 print('%r generated an exception: %s' % (url, exc))
 
@@ -98,4 +103,4 @@ def list_file(input_file, output_file):
 asyncio.run(process_urls('input.txt', 'success.txt'))
 list_file('success.txt', 'success_result.txt')
 
-print ("all done")
+print("all done")
