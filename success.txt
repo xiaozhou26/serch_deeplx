@@ -362,3 +362,4 @@ https://geshandi.app
 http://h.hony-wen.com:1188
 http://23.172.40.177:8000
 http://101.43.11.30:9188
+https://deeplxapi.x7ys.com
