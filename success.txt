@@ -367,3 +367,7 @@ http://43.134.183.35:1188
 http://16.163.29.52:12295
 http://16.163.29.52:12293
 https://jessica.mmyy.fun
+http://43.132.236.41
+http://gptspt.cn
+http://www.gptspt.cn
+http://74.48.202.105:8082
