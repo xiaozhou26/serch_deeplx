@@ -371,3 +371,4 @@ http://43.132.236.41
 http://gptspt.cn
 http://www.gptspt.cn
 http://74.48.202.105:8082
+http://106.14.155.58:18019
